@@ -47,6 +47,9 @@ public class Elevator extends SubsystemBase implements BaseLinearMechanism<Eleva
     @Log
     private final SparkMax motor;
 
+    @Log
+    private final SparkMax follower;
+
     private SparkMaxConfig motorConfig;
 
     @Log(groups = "control")
@@ -102,7 +105,11 @@ public class Elevator extends SubsystemBase implements BaseLinearMechanism<Eleva
                 .velocityConversionFactor(ENCODER_ROTATIONS_TO_METERS / 60.0);
 
         motor = new SparkMax(MOTOR_ID, MotorType.kBrushless);
+        follower = new SparkMax(MOTOR_ID_FOLLOWER, MotorType.kBrushless);
         motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+        motorConfig.follow(motor, FOLLOW_INVERTED);
+        follower.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         sysIdRoutine = new SysIdRoutine(
                 new SysIdRoutine.Config(Volts.of(1).per(Seconds), Volts.of(5), null, null),
