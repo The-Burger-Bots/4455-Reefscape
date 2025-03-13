@@ -32,7 +32,9 @@ public class Constants {
         public static final double SCORING_MOVEMENT = -0.25;
 
         public static final int MOTOR_ID = 5;
+        public static final int MOTOR_ID_FOLLOWER = 6;
         public static final boolean MOTOR_INVERTED = false;
+        public static final boolean FOLLOW_INVERTED = true;
 
         public static final DCMotor MOTOR_GEARBOX_REPR = DCMotor.getNEO(1);
         public static final double GEARING = 5.0;
