@@ -31,8 +31,14 @@ public class Constants {
 
         public static final double SCORING_MOVEMENT = -0.25;
 
-        public static final int MOTOR_ID = 5;
+        public static final int MOTOR_ID = 16; //Right elevator motor?
         public static final boolean MOTOR_INVERTED = false;
+
+       // public static final int MOTOR_ID = 15; //Left elevator motor?
+       // public static final boolean MOTOR_INVERTED = true;
+       // I tried to add these 2 lines but got redlines under MOTOR_ID and MOTOR_INVERTED
+      
+
 
         public static final DCMotor MOTOR_GEARBOX_REPR = DCMotor.getNEO(1);
         public static final double GEARING = 5.0;
@@ -81,7 +87,7 @@ public class Constants {
         public static final double MOTION_LIMIT = -0.7;
         public static final double SCORING_MOVEMENT = -0.8;
 
-        public static final int MOTOR_ID = 12;
+        public static final int MOTOR_ID = 17; //12
         public static final boolean MOTOR_INVERTED = true;
 
         public static final DCMotor MOTOR_GEARBOX_REPR = DCMotor.getNEO(1);
@@ -112,7 +118,7 @@ public class Constants {
     }
 
     public static final class Intake {
-        public static final int MOTOR_ID = 13;
+        public static final int MOTOR_ID = 18;  //13
         public static final boolean MOTOR_INVERTED = true;
         public static final int CURRENT_LIMIT = 60;
     }
