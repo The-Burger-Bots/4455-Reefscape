@@ -33,8 +33,8 @@ public class Constants {
 
         public static final int MOTOR_ID = 16;
         public static final int MOTOR_ID_FOLLOWER = 15;
-        public static final boolean MOTOR_INVERTED = false;
-        public static final boolean FOLLOW_INVERTED = true;
+        public static final boolean MOTOR_INVERTED = true;
+        public static final boolean FOLLOW_INVERTED = false;
 
        // public static final int MOTOR_ID = 15; //Left elevator motor?
        // public static final boolean MOTOR_INVERTED = true;
