@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
@@ -129,6 +130,13 @@ public class RobotContainer {
         operator.x().whileTrue(RobotCommands.prepareCoralScoreCommand(ScoreLevel.L2, elevator, arm));
         operator.b().whileTrue(RobotCommands.prepareCoralScoreCommand(ScoreLevel.L3, elevator, arm));
         operator.y().whileTrue(RobotCommands.prepareCoralScoreCommand(ScoreLevel.L4, elevator, arm));
+
+        operator.povUp().whileTrue(Commands.runOnce(() -> elevator.setVoltage(3)))
+            .onFalse(Commands.runOnce(() -> elevator.setVoltage(0)));
+
+        operator.povDown().whileTrue(Commands.runOnce(() -> elevator.setVoltage(-3)))
+            .onFalse(Commands.runOnce(() -> elevator.setVoltage(0)));
+
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }
