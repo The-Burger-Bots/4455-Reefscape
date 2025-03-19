@@ -88,7 +88,6 @@ public class RobotContainer {
     public RobotContainer() {
         autoChooser = AutoBuilder.buildAutoChooser("Tests");
         SmartDashboard.putData("Auto Mode", autoChooser);
-        GlobalStates.INITIALIZED.enableCommand();
 
         configureBindings();
     }
