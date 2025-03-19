@@ -35,7 +35,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.PositionTracker;
 import frc.robot.Constants.Arm.ArmPosition;
-import frc.robot.GlobalStates;
 
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
@@ -184,10 +183,6 @@ public class Arm extends SubsystemBase implements BaseSingleJointedArm<ArmPositi
                 && getPosition() < 0
                 && positionTracker.getElevatorPosition() < Constants.Elevator.MOTION_LIMIT) {
             voltage = 0;
-        }
-
-        if (!GlobalStates.INITIALIZED.enabled()) {
-            voltage = 0.0;
         }
 
         motor.setVoltage(voltage);

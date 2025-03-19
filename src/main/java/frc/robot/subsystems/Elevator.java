@@ -33,7 +33,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.PositionTracker;
 import frc.robot.Constants;
-import frc.robot.GlobalStates;
 import frc.robot.Constants.Elevator.ElevatorPosition;
 
 import static edu.wpi.first.units.Units.Meters;
@@ -192,12 +191,7 @@ public class Elevator extends SubsystemBase implements BaseLinearMechanism<Eleva
             voltage = 0;
         }
 
-        if (!GlobalStates.INITIALIZED.enabled()) {
-            voltage = 0.0;
-        }
-
         motor.setVoltage(voltage);
-
     }
 
     @Override
