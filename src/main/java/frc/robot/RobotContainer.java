@@ -131,12 +131,13 @@ public class RobotContainer {
         operator.b().whileTrue(RobotCommands.prepareCoralScoreCommand(ScoreLevel.L3, elevator, arm));
         operator.y().whileTrue(RobotCommands.prepareCoralScoreCommand(ScoreLevel.L4, elevator, arm));
 
-        operator.povUp().whileTrue(Commands.startEnd(() -> elevator.setVoltage(3),
-            () -> elevator.holdCurrentPositionCommand()));
+        operator.povUp().whileTrue(elevator.setOverridenSpeedCommand(() -> 0.5));
 
-        operator.povDown().whileTrue(Commands.startEnd(() -> elevator.setVoltage(-3),
-            () -> elevator.holdCurrentPositionCommand()));
+        operator.povDown().whileTrue(elevator.setOverridenSpeedCommand(() -> -0.5));
 
+        operator.leftBumper().whileTrue(intake.slowRollersCommand());
+        operator.leftTrigger().whileTrue(intake.runRollersCommand());
+        operator.rightTrigger().whileTrue(intake.reverseRollersCommand());
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }
