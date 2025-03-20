@@ -134,4 +134,16 @@ public class Constants {
         public static final boolean MOTOR_INVERTED = true;
         public static final int CURRENT_LIMIT = 60;
     }
+
+    public static final class Climber {
+        public static final int MOTOR_ID = 20;
+        public static final boolean MOTOR_INVERTED = true;
+        public static final int CURRENT_LIMIT = 80;
+    }
+
+    public static final class Wrist {
+        public static final int MOTOR_ID = 21;  //??
+        public static final boolean MOTOR_INVERTED = true;
+        public static final int CURRENT_LIMIT = 60;
+    }
 }

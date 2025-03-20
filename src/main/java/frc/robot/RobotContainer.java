@@ -25,12 +25,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Wrist;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -62,6 +63,7 @@ public class RobotContainer {
     private final CommandXboxController operator = new CommandXboxController(1);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    private double turtlemode = 1.0;
 
     private Mechanism2d mechanisms = new Mechanism2d(5, 3);
     private MechanismRoot2d root = mechanisms.getRoot("root", 2.5, 0.25);
@@ -91,7 +93,10 @@ public class RobotContainer {
     Arm arm = new Arm(positionTracker, armLigament, elevator::getCarriageComponentPose);
     @Log
     Intake intake = new Intake();
-
+    @Log
+    Climber climber = new Climber();
+    @Log
+    Wrist wrist = new Wrist();
 
     /* Path follower */
     private final SendableChooser<Command> autoChooser;
@@ -109,8 +114,8 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-driver.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-driver.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                drive.withVelocityX(-driver.getLeftY() * MaxSpeed * turtlemode) // Drive forward with negative Y (forward)
+                    .withVelocityY(-driver.getLeftX() * MaxSpeed * turtlemode) // Drive left with negative X (left)
                     .withRotationalRate(-driver.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
@@ -136,6 +141,7 @@ public class RobotContainer {
 
         // reset the field-centric heading on left bumper press
         driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        driver.rightBumper().whileTrue(Commands.startEnd(() -> turtlemode = 0.3, () -> turtlemode = 1.0));
 
 
    // Turtle Mode toggle
@@ -163,6 +169,12 @@ public class RobotContainer {
         operator.leftBumper().whileTrue(intake.slowRollersCommand());
         operator.leftTrigger().whileTrue(intake.runRollersCommand());
         operator.rightTrigger().whileTrue(intake.reverseRollersCommand());
+
+        operator.povLeft().whileTrue(wrist.runRollersCommand());
+        operator.povRight().whileTrue(wrist.reverseRollersCommand());
+
+        operator.back().whileTrue(climber.reverseRollersCommand());
+        operator.start().whileTrue(climber.runRollersCommand());
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }
