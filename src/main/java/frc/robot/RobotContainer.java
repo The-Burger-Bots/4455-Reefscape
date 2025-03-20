@@ -36,6 +36,17 @@ public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
+   // private double MaxSpeed = TunerConstants.kSpeedAt12VoltsMps; // Initial max is true top speed
+    private final double TurtleSpeed = 0.1; // Reduction in speed from Max Speed, 0.1 = 10%
+   // private final double MaxAngularRate = Math.PI * 1.5; // .75 rotation per second max angular velocity.  Adjust for max turning rate speed.
+    private final double TurtleAngularRate = Math.PI * 0.5; // .25 rotation per second max angular velocity.  Adjust for max turning rate speed.
+    private double AngularRate = MaxAngularRate; // This will be updated when turtle and reset to MaxAngularRate
+  
+
+
+
+
+
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
@@ -125,6 +136,20 @@ public class RobotContainer {
 
         // reset the field-centric heading on left bumper press
         driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+
+
+   // Turtle Mode toggle
+   driver.rightBumper().onTrue(either(
+    runOnce(() -> MaxSpeed = TunerConstants.kSpeedAt12VoltsMps * TurtleSpeed)
+        .andThen(() -> AngularRate = TurtleAngularRate)
+        .alongWith(runOnce(() -> turtle = false)),
+    runOnce(() -> MaxSpeed = TunerConstants.kSpeedAt12VoltsMps * speedChooser.getSelected())
+        .andThen(() -> AngularRate = MaxAngularRate)
+        .alongWith(runOnce(() -> turtle = true)),
+    () -> turtle));
+
+
+
 
         operator.a().whileTrue(RobotCommands.prepareCoralScoreCommand(ScoreLevel.L1, elevator, arm));
         operator.x().whileTrue(RobotCommands.prepareCoralScoreCommand(ScoreLevel.L2, elevator, arm));
