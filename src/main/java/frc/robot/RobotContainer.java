@@ -32,22 +32,10 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Wrist;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
-
-   // private double MaxSpeed = TunerConstants.kSpeedAt12VoltsMps; // Initial max is true top speed
-    private final double TurtleSpeed = 0.1; // Reduction in speed from Max Speed, 0.1 = 10%
-   // private final double MaxAngularRate = Math.PI * 1.5; // .75 rotation per second max angular velocity.  Adjust for max turning rate speed.
-    private final double TurtleAngularRate = Math.PI * 0.5; // .25 rotation per second max angular velocity.  Adjust for max turning rate speed.
-    private double AngularRate = MaxAngularRate; // This will be updated when turtle and reset to MaxAngularRate
-  
-
-
-
-
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -96,8 +84,6 @@ public class RobotContainer {
     Intake intake = new Intake();
     @Log
     Climber climber = new Climber();
-    @Log
-    Wrist wrist = new Wrist();
 
     /* Path follower */
     private final SendableChooser<Command> autoChooser;
@@ -147,20 +133,6 @@ public class RobotContainer {
         driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         driver.rightBumper().whileTrue(Commands.startEnd(() -> turtlemode = 0.3, () -> turtlemode = 1.0));
 
-
-   // Turtle Mode toggle
-   driver.rightBumper().onTrue(either(
-    runOnce(() -> MaxSpeed = TunerConstants.kSpeedAt12VoltsMps * TurtleSpeed)
-        .andThen(() -> AngularRate = TurtleAngularRate)
-        .alongWith(runOnce(() -> turtle = false)),
-    runOnce(() -> MaxSpeed = TunerConstants.kSpeedAt12VoltsMps * speedChooser.getSelected())
-        .andThen(() -> AngularRate = MaxAngularRate)
-        .alongWith(runOnce(() -> turtle = true)),
-    () -> turtle));
-
-
-
-
         operator.a().whileTrue(RobotCommands.prepareCoralScoreCommand(ScoreLevel.L1, elevator, arm));
         operator.x().whileTrue(RobotCommands.prepareCoralScoreCommand(ScoreLevel.L2, elevator, arm));
         operator.b().whileTrue(RobotCommands.prepareCoralScoreCommand(ScoreLevel.L3, elevator, arm));
@@ -174,8 +146,8 @@ public class RobotContainer {
         operator.leftTrigger().whileTrue(intake.runRollersCommand());
         operator.rightTrigger().whileTrue(intake.reverseRollersCommand());
 
-        operator.povLeft().whileTrue(wrist.runRollersCommand());
-        operator.povRight().whileTrue(wrist.reverseRollersCommand());
+        operator.povLeft().whileTrue(arm.moveManuallyOut());
+        operator.povRight().whileTrue(arm.moveManuallyIn());
 
         operator.back().whileTrue(climber.reverseRollersCommand());
         operator.start().whileTrue(climber.runRollersCommand());
