@@ -177,15 +177,23 @@ public class Arm extends SubsystemBase implements BaseSingleJointedArm<ArmPositi
     @Override
     public void setVoltage(double voltage) {
         voltage = MathUtil.clamp(voltage, -12, 12);
-        voltage = Utils.applySoftStops(voltage, getPosition(), MIN_ANGLE_RADIANS, MAX_ANGLE_RADIANS);
-
-        if (voltage < 0
-                && getPosition() < 0
-                && positionTracker.getElevatorPosition() < Constants.Elevator.MOTION_LIMIT) {
-            voltage = 0;
-        }
+        //voltage = Utils.applySoftStops(voltage, getPosition(), MIN_ANGLE_RADIANS, MAX_ANGLE_RADIANS);
 
         motor.setVoltage(voltage);
+    }
+
+    public Command moveManuallyOut() {
+        return Commands.startEnd(
+                () -> setVoltage(6),
+                () -> setVoltage(0))
+                .withName("arm.manualOut");
+    }
+
+    public Command moveManuallyIn() {
+        return Commands.startEnd(
+            () -> setVoltage(-6),
+            () -> setVoltage(0))
+            .withName("arm.manualIn");
     }
 
     @Override
