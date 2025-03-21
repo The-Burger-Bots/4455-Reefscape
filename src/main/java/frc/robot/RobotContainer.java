@@ -10,6 +10,7 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.techhounds.houndutil.houndlog.annotations.Log;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -102,6 +103,9 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
+        NamedCommands.registerCommand("L4", RobotCommands.prepareCoralScoreCommand(ScoreLevel.L4, elevator, arm));
+        NamedCommands.registerCommand("Shoot", intake.runRollersCommand().withTimeout(1));
+
         autoChooser = AutoBuilder.buildAutoChooser("Tests");
         SmartDashboard.putData("Auto Mode", autoChooser);
 
