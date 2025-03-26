@@ -24,13 +24,13 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
 
 public class RobotContainer {
@@ -77,9 +77,7 @@ public class RobotContainer {
     PositionTracker positionTracker = new PositionTracker();
 
     @Log
-    Elevator elevator = new Elevator(positionTracker, elevatorLigament);
-    @Log
-    Arm arm = new Arm(positionTracker, armLigament, elevator::getCarriageComponentPose);
+    Arm arm = new Arm(positionTracker, armLigament);
     @Log
     Intake intake = new Intake();
     @Log
@@ -89,8 +87,10 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
-        NamedCommands.registerCommand("L4", RobotCommands.prepareCoralScoreCommand(ScoreLevel.L4, elevator, arm));
-        NamedCommands.registerCommand("Shoot", intake.runRollersCommand().withTimeout(1));
+        NamedCommands.registerCommand("Shoot", Commands.parallel(
+            intake.runRollersCommand().withTimeout(1),
+            Commands.waitSeconds(0.25).andThen(arm.moveManuallyOut().withTimeout(1))
+                .andThen(arm.moveManuallyIn().withTimeout(1))));
 
         autoChooser = AutoBuilder.buildAutoChooser("Tests");
         SmartDashboard.putData("Auto Mode", autoChooser);
@@ -133,16 +133,10 @@ public class RobotContainer {
         driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         driver.rightBumper().whileTrue(Commands.startEnd(() -> turtlemode = 0.3, () -> turtlemode = 1.0));
 
-        operator.a().whileTrue(RobotCommands.prepareCoralScoreCommand(ScoreLevel.L1, elevator, arm));
-        operator.x().whileTrue(RobotCommands.prepareCoralScoreCommand(ScoreLevel.L2, elevator, arm));
-        operator.b().whileTrue(RobotCommands.prepareCoralScoreCommand(ScoreLevel.L3, elevator, arm));
-        operator.y().whileTrue(RobotCommands.prepareCoralScoreCommand(ScoreLevel.L4, elevator, arm));
-
-        operator.povUp().whileTrue(elevator.setOverridenSpeedCommand(() -> 0.5));
-
-        operator.povDown().whileTrue(elevator.setOverridenSpeedCommand(() -> -0.5));
-
-        operator.leftBumper().whileTrue(intake.slowRollersCommand());
+        operator.leftBumper().whileTrue(Commands.parallel(
+            intake.runRollersCommand().withTimeout(1),
+            Commands.waitSeconds(0.25).andThen(arm.moveManuallyOut().withTimeout(1))
+                .andThen(arm.moveManuallyIn().withTimeout(1))));
         operator.leftTrigger().whileTrue(intake.runRollersCommand());
         operator.rightTrigger().whileTrue(intake.reverseRollersCommand());
 
