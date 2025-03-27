@@ -86,12 +86,11 @@ public class Arm extends SubsystemBase implements BaseSingleJointedArm<ArmPositi
 
     private final PositionTracker positionTracker;
     private final MechanismLigament2d ligament;
-    private final Supplier<Pose3d> carriagePoseSupplier;
 
     @Log
     private boolean initialized;
 
-    public Arm(PositionTracker positionTracker, MechanismLigament2d ligament, Supplier<Pose3d> carriagePoseSupplier) {
+    public Arm(PositionTracker positionTracker, MechanismLigament2d ligament) {
 
         motorConfig = new SparkMaxConfig();
         motorConfig
@@ -119,7 +118,6 @@ public class Arm extends SubsystemBase implements BaseSingleJointedArm<ArmPositi
 
         this.positionTracker = positionTracker;
         this.ligament = ligament;
-        this.carriagePoseSupplier = carriagePoseSupplier;
 
         positionTracker.setArmAngleSupplier(this::getPosition);
 
@@ -141,18 +139,6 @@ public class Arm extends SubsystemBase implements BaseSingleJointedArm<ArmPositi
 
     // return new Pose3d(0.168, 0, 0.247, new Rotation3d());
     // -0.083
-
-    @Log(groups = "components")
-    public Pose3d getArmComponentPose() {
-        return carriagePoseSupplier.get()
-                .plus(new Transform3d(0.083, 0, 0, new Rotation3d()))
-                .plus(new Transform3d(0, 0, 0, new Rotation3d(0, -getPosition(), 0)));
-    }
-
-    @Log(groups = "components")
-    public Pose3d getClawComponentPose() {
-        return getArmComponentPose().plus(new Transform3d(0.2585, 0, 0, new Rotation3d()));
-    }
 
     @Log
     @Override
